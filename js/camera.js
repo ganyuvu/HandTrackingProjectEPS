@@ -47,10 +47,18 @@ export function startCamera(constraints) {
   navigator.mediaDevices.getUserMedia(constraints)
     .then((stream) => {
       videoElement.srcObject = stream;
+      videoElement.muted = true; // Ensure video is muted
+      videoElement.play(); // Ensure video is playing
+
+      // Ensure canvas is updated after video metadata is loaded
       videoElement.onloadedmetadata = () => {
         canvasElement.width = videoElement.videoWidth;
         canvasElement.height = videoElement.videoHeight;
+        console.log('Camera initialized and video metadata loaded.');
       };
+
+      // Debugging to ensure stream is being processed
+      console.log('Video stream started');
     })
     .catch((error) => {
       console.error('Error accessing camera:', error);
