@@ -1,10 +1,6 @@
 import { startCamera, videoElement } from './camera.js';
 import { onResults } from './handDetection.js';
 
-// Start the camera first
-startCamera();
-
-// Initialize hands
 const hands = new Hands({
   locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
 });
@@ -18,14 +14,11 @@ hands.setOptions({
 
 hands.onResults(onResults);
 
-// Initialize the camera with video element
-const camera = new Camera(videoElement, {
-  onFrame: async () => {
-    await hands.send({ image: videoElement });
-  },
-  width: 640,
-  height: 480
+// Use requestAnimationFrame manually instead of Mediapipe's Camera class
+startCamera().then(() => {
+  function processFrame() {
+    hands.send({ image: videoElement });
+    requestAnimationFrame(processFrame);
+  }
+  requestAnimationFrame(processFrame);
 });
-
-// Start the camera stream (use startCamera() for constraints)
-camera.start();
