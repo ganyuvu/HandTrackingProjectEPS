@@ -11,11 +11,11 @@ body, html {
 /* Ensure the video element fits properly within the window */
 #input_video {
   position: absolute;
-  top: 0; /* No offset for full coverage */
-  left: 0; /* No offset for full coverage */
-  width: 100vw; /* Use full viewport width */
-  height: 100vh; /* Use full viewport height */
-  object-fit: cover; /* Ensures video covers the entire screen */
+  top: 0; /* No margin */
+  left: 0; /* No margin */
+  width: 100vw; /* Full width of the viewport */
+  height: 100vh; /* Full height of the viewport */
+  object-fit: cover; /* Ensure the video covers the entire screen */
   z-index: 1;
 }
 
@@ -24,10 +24,10 @@ body, html {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw; /* Use full viewport width */
-  height: 100vh; /* Use full viewport height */
-  object-fit: cover;  /* Ensure canvas covers entire screen */
+  width: 100vw; /* Full width of the viewport */
+  height: 100vh; /* Full height of the viewport */
   z-index: 2;
+  pointer-events: none; /* So that it doesn't block video interaction */
 }
 
 /* Style the UI overlay text */
