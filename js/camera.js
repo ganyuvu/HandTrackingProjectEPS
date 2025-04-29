@@ -5,16 +5,45 @@ export const canvasCtx = canvasElement.getContext('2d');
 // Check if the device is mobile
 const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-// Set camera constraints
-const constraints = {
-  video: isMobile
-    ? { facingMode: 'environment' } // Only use the back camera on mobile
-    : true,  // Default camera on desktop (no preference)
-  audio: false, // Disable audio
-};
+// Function to get the back camera explicitly
+async function getBackCamera() {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  const videoDevices = devices.filter(device => device.kind === 'videoinput');
+  
+  // Try to find the back camera
+  const backCamera = videoDevices.find(device => device.label.toLowerCase().includes('environment') || device.deviceId);
 
-// Start the camera stream
-export function startCamera() {
+  if (backCamera) {
+    return { 
+      video: { 
+        deviceId: backCamera.deviceId 
+      }, 
+      audio: false 
+    };
+  } else {
+    throw new Error('No back camera found');
+  }
+}
+
+// Set camera constraints based on device type
+async function setCameraConstraints() {
+  let constraints;
+  if (isMobile) {
+    try {
+      constraints = await getBackCamera(); // Force the back camera on mobile
+    } catch (error) {
+      console.error('Error:', error);
+      constraints = { video: { facingMode: 'environment' }, audio: false };
+    }
+  } else {
+    constraints = { video: true, audio: false }; // Default for desktop
+  }
+
+  startCamera(constraints);
+}
+
+// Start the camera stream with given constraints
+export function startCamera(constraints) {
   navigator.mediaDevices.getUserMedia(constraints)
     .then((stream) => {
       videoElement.srcObject = stream;
@@ -27,3 +56,6 @@ export function startCamera() {
       console.error('Error accessing camera:', error);
     });
 }
+
+// Run the camera setup
+setCameraConstraints();
