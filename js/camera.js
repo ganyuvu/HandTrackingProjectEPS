@@ -5,8 +5,9 @@ export const canvasCtx = canvasElement.getContext('2d');
 // Camera constraints
 const constraints = {
   video: {
-    facingMode: 'environment',
-  }
+    facingMode: { ideal: 'environment' }
+  },
+  audio: false
 };
 
 // Start the camera stream
