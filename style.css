@@ -11,11 +11,11 @@ body, html {
 /* Ensure the video element fits properly within the window */
 #input_video {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 100%;      /* Take up full width */
-  height: auto;     /* Maintain aspect ratio */
-  object-fit: contain; /* Fit the video in the available space without zooming */
+  top: 0; /* No offset for full coverage */
+  left: 0; /* No offset for full coverage */
+  width: 100vw; /* Use full viewport width */
+  height: 100vh; /* Use full viewport height */
+  object-fit: cover; /* Ensures video covers the entire screen */
   z-index: 1;
 }
 
@@ -24,9 +24,9 @@ body, html {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;  /* This makes sure the canvas matches the screen */
+  width: 100vw; /* Use full viewport width */
+  height: 100vh; /* Use full viewport height */
+  object-fit: cover;  /* Ensure canvas covers entire screen */
   z-index: 2;
 }
 
