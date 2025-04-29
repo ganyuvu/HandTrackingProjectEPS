@@ -2,42 +2,40 @@ export const videoElement = document.getElementById('input_video');
 export const canvasElement = document.getElementById('output_canvas');
 export const canvasCtx = canvasElement.getContext('2d');
 
-// Check if the device is mobile
-const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+export async function startCamera() {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(device => device.kind === 'videoinput');
 
-// Set camera constraints
-const constraints = {
-  video: isMobile
-    ? { facingMode: { ideal: 'environment' } } // Use back camera on mobile
-    : true,  // Default camera on desktop
-  audio: false, // Disable audio
-};
+    console.log('Available video devices:', videoDevices);
 
-// Start the camera stream
-export function startCamera() {
-  navigator.mediaDevices.getUserMedia(constraints)
-    .then((stream) => {
-      console.log('Camera stream started');
-      videoElement.srcObject = stream;
-      videoElement.onloadedmetadata = () => {
-        canvasElement.width = videoElement.videoWidth;
-        canvasElement.height = videoElement.videoHeight;
-        console.log(`Video stream dimensions: ${videoElement.videoWidth}x${videoElement.videoHeight}`);
-      };
-    })
-    .catch((error) => {
-      console.error('Error accessing camera:', error);
-      alert(`Error: ${error.name}\nMessage: ${error.message}`); // Display error in an alert
-    });
+    let backCamera = videoDevices.find(device =>
+      /back|rear|environment/i.test(device.label)
+    );
+
+    // Fallback to last camera if back one wasn't found
+    if (!backCamera && videoDevices.length > 1) {
+      backCamera = videoDevices[videoDevices.length - 1];
+    }
+
+    const constraints = {
+      video: backCamera
+        ? { deviceId: { exact: backCamera.deviceId } }
+        : { facingMode: { ideal: 'environment' } },
+      audio: false
+    };
+
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    videoElement.srcObject = stream;
+
+    videoElement.onloadedmetadata = () => {
+      canvasElement.width = videoElement.videoWidth;
+      canvasElement.height = videoElement.videoHeight;
+      console.log(`Camera started: ${videoElement.videoWidth}x${videoElement.videoHeight}`);
+    };
+
+  } catch (error) {
+    console.error('Failed to acquire camera feed:', error);
+    alert(`Camera Error: ${error.message}`);
+  }
 }
-
-// Detect and log available devices (for debugging)
-navigator.mediaDevices.enumerateDevices()
-  .then(devices => {
-    devices.forEach(device => {
-      if (device.kind === 'videoinput') {
-        console.log(`Device found: ${device.label} - ${device.deviceId}`);
-      }
-    });
-  })
-  .catch(err => console.error('Error enumerating devices:', err));
