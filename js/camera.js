@@ -1,18 +1,16 @@
 export const videoElement = document.getElementById('input_video');
 export const canvasElement = document.getElementById('output_canvas');
 export const canvasCtx = canvasElement.getContext('2d');
-const switchCameraBtn = document.getElementById('switchCameraBtn');
 
-let currentFacingMode = 'environment'; // Start with back camera
+// Check if the device is mobile
+const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-// Camera constraints
-let constraints = {
-  video: {
-    facingMode: currentFacingMode,
-    width: { ideal: 1280 },
-    height: { ideal: 720 }
-  },
-  audio: false  // Disable audio if not needed
+// Set camera constraints
+const constraints = {
+  video: isMobile
+    ? { facingMode: { ideal: 'environment' } } // Use back camera on mobile
+    : true,  // Default camera on desktop
+  audio: false, // Disable audio
 };
 
 // Start the camera stream
@@ -29,21 +27,3 @@ export function startCamera() {
       console.error('Error accessing camera:', error);
     });
 }
-
-// Switch between front and back camera when the button is clicked
-switchCameraBtn.addEventListener('click', () => {
-  // Toggle between front and back camera
-  currentFacingMode = currentFacingMode === 'environment' ? 'user' : 'environment';
-
-  // Stop the current stream
-  const stream = videoElement.srcObject;
-  const tracks = stream.getTracks();
-  tracks.forEach(track => track.stop());
-
-  // Update the constraints and start the camera again
-  constraints.video.facingMode = currentFacingMode;
-  startCamera();
-});
-
-// Start the camera when the page loads
-startCamera();
