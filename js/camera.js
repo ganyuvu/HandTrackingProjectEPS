@@ -5,7 +5,7 @@ export const canvasCtx = canvasElement.getContext('2d');
 // Set camera constraints for mobile only (use the back camera)
 const constraints = {
   video: {
-    facingMode: { ideal: 'user' },  // This ensures we use the back camera
+    facingMode: { exact: 'environment' },  // This ensures we use the back camera
     width: { ideal: 1280 },  // Optional: Set desired width
     height: { ideal: 720 }   // Optional: Set desired height
   },
