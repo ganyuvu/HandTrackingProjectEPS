@@ -2,29 +2,29 @@ export const videoElement = document.getElementById('input_video');
 export const canvasElement = document.getElementById('output_canvas');
 export const canvasCtx = canvasElement.getContext('2d');
 
-// Force the back camera for both Android and iOS
-async function getBackCamera() {
+// Function to get the back camera by its deviceId
+async function getBackCameraDeviceId() {
   const devices = await navigator.mediaDevices.enumerateDevices();
-  const backCamera = devices.find(device => device.kind === 'videoinput' && device.label.includes('back'));
+  const backCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
   return backCamera ? backCamera.deviceId : null;
 }
 
-// Camera constraints, with the back camera enforced for both platforms
+// Constraints to force the back camera
 const constraints = {
   video: {
-    facingMode: 'environment', // "environment" suggests back camera by default
-    width: { ideal: 1280 },
-    height: { ideal: 720 }
+    facingMode: 'environment', // Default suggestion for back camera
+    width: { ideal: 1280 },     // Optional: Ideal width
+    height: { ideal: 720 },     // Optional: Ideal height
   },
   audio: false, // No audio needed
 };
 
-// Start the camera stream
+// Start the camera and ensure back camera is used
 export async function startCamera() {
-  const backCameraId = await getBackCamera();
-  
-  if (backCameraId) {
-    constraints.video.deviceId = backCameraId;  // Force the back camera by deviceId
+  const backCameraDeviceId = await getBackCameraDeviceId();
+
+  if (backCameraDeviceId) {
+    constraints.video.deviceId = backCameraDeviceId;  // Use the back camera explicitly if we found it
   }
 
   navigator.mediaDevices.getUserMedia(constraints)
