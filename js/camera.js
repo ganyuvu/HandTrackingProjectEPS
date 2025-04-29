@@ -17,13 +17,27 @@ const constraints = {
 export function startCamera() {
   navigator.mediaDevices.getUserMedia(constraints)
     .then((stream) => {
+      console.log('Camera stream started');
       videoElement.srcObject = stream;
       videoElement.onloadedmetadata = () => {
         canvasElement.width = videoElement.videoWidth;
         canvasElement.height = videoElement.videoHeight;
+        console.log(`Video stream dimensions: ${videoElement.videoWidth}x${videoElement.videoHeight}`);
       };
     })
     .catch((error) => {
       console.error('Error accessing camera:', error);
+      alert(`Error: ${error.name}\nMessage: ${error.message}`); // Display error in an alert
     });
 }
+
+// Detect and log available devices (for debugging)
+navigator.mediaDevices.enumerateDevices()
+  .then(devices => {
+    devices.forEach(device => {
+      if (device.kind === 'videoinput') {
+        console.log(`Device found: ${device.label} - ${device.deviceId}`);
+      }
+    });
+  })
+  .catch(err => console.error('Error enumerating devices:', err));
