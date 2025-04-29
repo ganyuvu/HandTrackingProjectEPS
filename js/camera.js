@@ -2,14 +2,14 @@ export const videoElement = document.getElementById('input_video');
 export const canvasElement = document.getElementById('output_canvas');
 export const canvasCtx = canvasElement.getContext('2d');
 
-// Set camera constraints for mobile only (use the back camera)
+// Set camera constraints for mobile (force the back camera)
 const constraints = {
   video: {
-    facingMode: { exact: 'environment' },  // This ensures we use the back camera
-    width: { ideal: 1280 },  // Optional: Set desired width
-    height: { ideal: 720 }   // Optional: Set desired height
+    facingMode: { exact: 'environment' }, // Force the back camera using 'exact'
+    width: { ideal: 1280 },  // Optional: Set the desired width
+    height: { ideal: 720 }   // Optional: Set the desired height
   },
-  audio: false,  // No audio needed
+  audio: false, // No audio needed
 };
 
 // Start the camera stream
@@ -18,7 +18,7 @@ export function startCamera() {
     .then((stream) => {
       videoElement.srcObject = stream;
       videoElement.onloadedmetadata = () => {
-        // Ensure canvas dimensions match video stream
+        // Ensure canvas dimensions match the video stream
         canvasElement.width = videoElement.videoWidth;
         canvasElement.height = videoElement.videoHeight;
       };

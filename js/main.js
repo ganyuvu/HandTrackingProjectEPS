@@ -1,9 +1,10 @@
 import { startCamera, videoElement } from './camera.js';
 import { onResults } from './handDetection.js';
 
-// Initialize everything
+// Start the camera first
 startCamera();
 
+// Initialize hands
 const hands = new Hands({
   locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
 });
@@ -17,6 +18,7 @@ hands.setOptions({
 
 hands.onResults(onResults);
 
+// Initialize the camera with video element
 const camera = new Camera(videoElement, {
   onFrame: async () => {
     await hands.send({ image: videoElement });
@@ -24,4 +26,6 @@ const camera = new Camera(videoElement, {
   width: 640,
   height: 480
 });
+
+// Start the camera stream (use startCamera() for constraints)
 camera.start();
