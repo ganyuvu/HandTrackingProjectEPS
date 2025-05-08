@@ -5,7 +5,7 @@ export const canvasCtx = canvasElement.getContext('2d');
 export async function startCamera() {
   const constraints = {
     video: {
-      facingMode: { ideal: 'environment' },
+      facingMode: { exact: 'environment' }, // strictly use the back camera
       width: { ideal: 1280 },
       height: { ideal: 720 }
     },
@@ -34,7 +34,9 @@ export async function startCamera() {
       };
     });
   } catch (error) {
-    console.error('Error accessing camera:', error);
-    alert("Unable to access the back camera.");
+    console.error('Error accessing back camera:', error);
+
+    // Show an error message if the back camera is not available
+    alert("Unable to access the back camera. Please check your device's settings.");
   }
 }
