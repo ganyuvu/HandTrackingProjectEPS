@@ -17,16 +17,14 @@ hands.onResults(onResults);
 async function init() {
   await startCamera();
 
-  // Wait for the video to start playing
-  videoElement.onplaying = () => {
-    function processFrame() {
+  function processFrame() {
+    if (videoElement.readyState === 4) {
       hands.send({ image: videoElement });
-      requestAnimationFrame(processFrame); // Continue to process the next frame
     }
+    requestAnimationFrame(processFrame); // Repeat on every frame
+  }
 
-    // Start processing frames once the video is playing
-    processFrame();
-  };
+  requestAnimationFrame(processFrame);
 }
 
 init();

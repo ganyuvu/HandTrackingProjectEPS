@@ -24,18 +24,12 @@ export async function startCamera() {
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     videoElement.srcObject = stream;
 
-    // Ensure the video is ready before proceeding
     await new Promise((resolve) => {
       videoElement.onloadedmetadata = () => {
         canvasElement.width = videoElement.videoWidth;
         canvasElement.height = videoElement.videoHeight;
         resolve();
       };
-    });
-
-    // Ensure the video is playing before proceeding
-    await new Promise((resolve) => {
-      videoElement.onplaying = resolve; // Wait for the video to start playing
     });
   } catch (error) {
     console.error('Error accessing back camera:', error);
