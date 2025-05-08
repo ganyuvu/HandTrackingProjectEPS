@@ -5,7 +5,7 @@ export const canvasCtx = canvasElement.getContext('2d');
 export async function startCamera() {
   const constraints = {
     video: {
-      facingMode: { exact: 'environment' },
+      facingMode: { ideal: 'environment' },
       width: { ideal: 1280 },
       height: { ideal: 720 }
     },
@@ -19,8 +19,17 @@ export async function startCamera() {
     return new Promise((resolve) => {
       videoElement.onloadedmetadata = () => {
         videoElement.play(); // ensure playback starts
+
+        // Set canvas and video dimensions correctly
         canvasElement.width = videoElement.videoWidth;
         canvasElement.height = videoElement.videoHeight;
+
+        videoElement.style.width = `${videoElement.videoWidth}px`;
+        videoElement.style.height = `${videoElement.videoHeight}px`;
+
+        canvasElement.style.width = `${videoElement.videoWidth}px`;
+        canvasElement.style.height = `${videoElement.videoHeight}px`;
+
         resolve();
       };
     });
