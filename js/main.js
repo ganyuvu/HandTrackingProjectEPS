@@ -19,6 +19,13 @@ async function init() {
 
   function processFrame() {
     if (videoElement.readyState === 4) {
+      // Clear the previous frame
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      
+      // Draw the current video frame to the canvas
+      canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+      
+      // Send the image to the hands model for hand tracking
       hands.send({ image: videoElement });
     }
     requestAnimationFrame(processFrame); // Repeat on every frame

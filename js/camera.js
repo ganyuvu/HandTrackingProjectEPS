@@ -13,23 +13,33 @@ export async function startCamera() {
 
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
+    // Check if the stream is valid
+    if (!stream) {
+      throw new Error('No stream received');
+    }
+
     videoElement.srcObject = stream;
     videoElement.playsInline = true;
     videoElement.muted = true;
     videoElement.autoplay = true;
 
-    // Ensure the video actually starts playing
+    // Ensure the video starts playing
     await videoElement.play();
 
-    // Wait until video is ready
+    // Log to check the video dimensions
+    console.log('Video dimensions:', videoElement.videoWidth, videoElement.videoHeight);
+
+    // Wait until video metadata is loaded
     await new Promise((resolve) => {
       videoElement.onloadedmetadata = () => {
+        console.log('Video metadata loaded');
         canvasElement.width = videoElement.videoWidth;
         canvasElement.height = videoElement.videoHeight;
         resolve();
       };
     });
 
+    console.log('Camera stream initialized successfully');
   } catch (error) {
     console.error('Error accessing camera:', error);
     alert('Camera access failed. Check permissions and use HTTPS.');
