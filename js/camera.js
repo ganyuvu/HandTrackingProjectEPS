@@ -2,41 +2,37 @@ export const videoElement = document.getElementById('input_video');
 export const canvasElement = document.getElementById('output_canvas');
 export const canvasCtx = canvasElement.getContext('2d');
 
+// Start the camera stream with back camera preference
 export async function startCamera() {
-  const constraints = {
-    video: {
-      facingMode: { exact: 'environment' }, // strictly use the back camera
-      width: { ideal: 1280 },
-      height: { ideal: 720 }
-    },
-    audio: false
-  };
-
   try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+    // Try to find a back-facing camera by label
+    const backCamera = videoDevices.find(device =>
+      device.label.toLowerCase().includes('back') ||
+      device.label.toLowerCase().includes('rear')
+    );
+
+    const constraints = {
+      video: backCamera
+        ? { deviceId: { exact: backCamera.deviceId } }
+        : { facingMode: { exact: 'environment' } }, // Fallback
+      audio: false
+    };
+
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     videoElement.srcObject = stream;
 
-    return new Promise((resolve) => {
+    await new Promise((resolve) => {
       videoElement.onloadedmetadata = () => {
-        videoElement.play(); // ensure playback starts
-
-        // Set canvas and video dimensions correctly
         canvasElement.width = videoElement.videoWidth;
         canvasElement.height = videoElement.videoHeight;
-
-        videoElement.style.width = `${videoElement.videoWidth}px`;
-        videoElement.style.height = `${videoElement.videoHeight}px`;
-
-        canvasElement.style.width = `${videoElement.videoWidth}px`;
-        canvasElement.style.height = `${videoElement.videoHeight}px`;
-
         resolve();
       };
     });
   } catch (error) {
     console.error('Error accessing back camera:', error);
-
-    // Show an error message if the back camera is not available
-    alert("Unable to access the back camera. Please check your device's settings.");
+    alert('Unable to access back camera. Please check permissions or device support.');
   }
 }
