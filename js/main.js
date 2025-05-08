@@ -1,6 +1,7 @@
-import { videoElement, startCamera } from './camera.js';
+import { videoElement } from './camera.js';
 import { onResults } from './handDetection.js';
 
+// Initialize Mediapipe Hands
 const hands = new Hands({
   locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
 });
@@ -14,18 +15,13 @@ hands.setOptions({
 
 hands.onResults(onResults);
 
-async function init() {
-  await startCamera(); // startCamera sets up the correct stream
+// Remove manual getUserMedia; let Camera handle it
+const camera = new Camera(videoElement, {
+  onFrame: async () => {
+    await hands.send({ image: videoElement });
+  },
+  width: 1280,
+  height: 720
+});
 
-  // Begin processing frames
-  function processFrame() {
-    if (videoElement.readyState >= 2) {
-      hands.send({ image: videoElement });
-    }
-    requestAnimationFrame(processFrame);
-  }
-
-  requestAnimationFrame(processFrame);
-}
-
-init();
+camera.start();
