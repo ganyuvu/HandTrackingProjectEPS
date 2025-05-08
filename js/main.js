@@ -17,21 +17,15 @@ hands.onResults(onResults);
 async function init() {
   await startCamera();
 
-  function processFrame() {
-    if (videoElement.readyState === 4) {
-      // Clear the previous frame
-      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-      
-      // Draw the current video frame to the canvas
-      canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-      
-      // Send the image to the hands model for hand tracking
-      hands.send({ image: videoElement });
-    }
-    requestAnimationFrame(processFrame); // Repeat on every frame
-  }
+  const camera = new Camera(videoElement, {
+    onFrame: async () => {
+      await hands.send({ image: videoElement });
+    },
+    width: videoElement.videoWidth,
+    height: videoElement.videoHeight
+  });
 
-  requestAnimationFrame(processFrame);
+  camera.start();
 }
 
 init();
