@@ -1,3 +1,4 @@
+/* Make the body and html take up the full screen and hide scrolling */
 body, html {
   margin: 0;
   padding: 0;
@@ -7,25 +8,29 @@ body, html {
   background-color: black;
 }
 
+/* Ensure the video element fits properly within the window */
 #input_video {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
+  top: 10px;
+  left: 10px;
+  width: 100%;      /* Take up full width */
+  height: auto;     /* Maintain aspect ratio */
+  object-fit: contain; /* Fit the video in the available space without zooming */
   z-index: 1;
 }
 
+/* Adjust canvas size to fill the screen and show the video feed */
 #output_canvas {
   position: absolute;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
+  object-fit: cover;  /* This makes sure the canvas matches the screen */
   z-index: 2;
 }
 
+/* Style the UI overlay text */
 #ui {
   position: absolute;
   top: 20px;
