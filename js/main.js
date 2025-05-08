@@ -14,18 +14,11 @@ hands.setOptions({
 
 hands.onResults(onResults);
 
-async function init() {
-  await startCamera();
-
-  const camera = new Camera(videoElement, {
-    onFrame: async () => {
-      await hands.send({ image: videoElement });
-    },
-    width: videoElement.videoWidth,
-    height: videoElement.videoHeight
-  });
-
-  camera.start();
-}
-
-init();
+// Use requestAnimationFrame manually instead of Mediapipe's Camera class
+startCamera().then(() => {
+  function processFrame() {
+    hands.send({ image: videoElement });
+    requestAnimationFrame(processFrame);
+  }
+  requestAnimationFrame(processFrame);
+});
