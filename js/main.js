@@ -17,15 +17,16 @@ hands.onResults(onResults);
 async function init() {
   await startCamera();
 
-  const camera = new Camera(videoElement, {
-    onFrame: async () => {
-      await hands.send({ image: videoElement });
-    },
-    width: videoElement.videoWidth,
-    height: videoElement.videoHeight
-  });
+  // Wait for the video to start playing
+  videoElement.onplaying = () => {
+    function processFrame() {
+      hands.send({ image: videoElement });
+      requestAnimationFrame(processFrame); // Continue to process the next frame
+    }
 
-  camera.start();
+    // Start processing frames once the video is playing
+    processFrame();
+  };
 }
 
 init();
