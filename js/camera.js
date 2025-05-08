@@ -17,7 +17,7 @@ export async function startCamera() {
     const constraints = {
       video: backCamera
         ? { deviceId: { exact: backCamera.deviceId } }
-        : { facingMode: { exact: 'environment' } }, // Fallback
+        : { facingMode: { exact: 'environment' } }, // Fallback to back camera if not found
       audio: false
     };
 
